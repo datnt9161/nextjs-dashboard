@@ -146,15 +146,19 @@ export async function fetchInvoiceById(id: string) {
     const { rows } = await pool.query<InvoiceForm>(
       `
       SELECT
-        invoices.id,
-        invoices.customer_id,
-        invoices.amount,
-        invoices.status
+        id,
+        customer_id,
+        amount,
+        status
       FROM invoices
-      WHERE invoices.id = $1
+      WHERE id = $1
       `,
       [id],
     );
+
+    if (rows.length === 0) {
+      return null; // 👈 quan trọng
+    }
 
     return {
       ...rows[0],
@@ -165,6 +169,7 @@ export async function fetchInvoiceById(id: string) {
     throw new Error('Failed to fetch invoice.');
   }
 }
+
 
 /* ===================== CUSTOMERS ===================== */
 export async function fetchCustomers() {
